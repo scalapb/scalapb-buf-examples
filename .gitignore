@@ -1,2 +1,12 @@
 *.class
 *.log
+.vscode
+.metals
+.history
+.bloop
+metals.sbt
+target/
+.bsp
+
+#Probably not the best idea but to keep this repo clean and let people run stuff themselves
+/src/main/scala/com/example/petstore/generated
