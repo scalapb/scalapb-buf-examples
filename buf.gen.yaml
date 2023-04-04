@@ -3,9 +3,6 @@ plugins:
   - plugin: buf.build/community/scalapb-scala:v0.11.13
     out: src/main/scala
     opt: 
-     - flat_package
      - grpc
   - plugin: buf.build/community/scalapb-zio-grpc:v0.5.3
     out: src/main/scala
-    opt:
-     - flat_package
