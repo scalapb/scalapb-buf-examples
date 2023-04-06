@@ -98,18 +98,16 @@ buf mod update
 And that's it! Buf will resolve the types of the dependencies and understand their use in your local environment. Additionally, the protobuf types used will also be generated. And if your protobuf files aren't intended for public consumption, Buf also supports private packages.
 
 ### Code Generation
-Oh no! Looks like this project is missing all the Scala types that are needed to compile and run the server. Don't fret though, we can easily fix this. Without code generation, protobuf can be pretty useless. So let's generate the code we need by running this command:
+Oh no! Looks like this project is missing all the Scala types that are needed to compile and run the server. But with Buf we can easily fix this. So let's generate the code we need by running this command:
 ```
 buf generate
 ```
 
-After running this, you should see all the Scala code and be able to compile and run the server. The code generation is performed by reading the buf.gen.yaml directory and executing the remote plugins listed there. Buf supports a range of plugins, which can be found on the [plugins page](https://buf.build/plugins).
+After running this, you should see all the Scala code and be able to compile and run the server. The code generation is performed by reading the `buf.gen.yaml` directory and executing the remote plugins listed there. Buf supports a range of plugins, which can be found on the [plugins page](https://buf.build/plugins).
 
-Plugins that currently exist
+Plugins for Scala specifically that currently exist are
 - [Base ScalaPb Compiler](https://buf.build/community/scalapb-scala)
 - [ZIO GRPC](https://buf.build/community/scalapb-zio-grpc)
-
-If you need a plugin that Buf doesn't currently support, fear not! You can easily add your own. Check out the plugins page for more information. There are also several plugins that are waiting to be merged, including FS2 GRPC, Akka GRPC, and Scalapb Validate. If you're interested in any of these plugins, be sure to drop a comment or +1 in the linked issues. Bonus points if you think your organization would benefit from them!
 
 **There are a list of plugins, however, that can be added quite easily, but due to the maintenance cost by the Buf team, they have not yet been merged. Please drop a comment or +1 in the linked issues below if you want to see them! Bonus points if you feel like your organization would make use of them.**
 
@@ -124,4 +122,4 @@ When using a custom protoc plugin that is not available remotely, it is not as s
 2. Install the protoc plugin on your $PATH using protoc-gen-<PLUGIN_NAME>
 3. In your buf.gen.yaml file, include your plugin in the list of plugins using the plugin: <PLUGIN_NAME> syntax.
 
-You can find more detailed instructions here. Keep in mind that this approach requires more manual setup and maintenance compared to using a remote plugin. You may wish to include the version as a suffix to the <PLUGIN_NAME> to ensure consistent behavior across computers.
+Keep in mind that this approach requires more manual setup and maintenance compared to using a remote plugin. Additionally you may wish to include the version as a suffix to the <PLUGIN_NAME> to ensure consistent behavior across computers, or allow different projects to work with different versions of the same plugin.
