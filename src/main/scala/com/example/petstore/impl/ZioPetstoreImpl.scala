@@ -1,37 +1,44 @@
 package com.example.petstore.impl
 
-import com.example.petstore.generated.petstore.{EmptyReq, EmptyRes, Pet, PetByIdRequest, PetResponse, User, UserByNameRequest, UserResponse}
 import com.example.petstore.generated.petstore.ZioPetstore._
 
 import zio.{IO, RefM}
 import zio.stream.{Stream, ZStream}
 
 import io.grpc.Status
+import com.example.petstore.generated.petstore.User
+import com.example.petstore.generated.petstore.PetByIdRequest
+import com.example.petstore.generated.petstore.PetByIdResponse
+import com.example.petstore.generated.petstore.UserByNameRequest
+import com.example.petstore.generated.petstore.UserByNameResponse
+import com.example.petstore.generated.petstore.Pet
+import com.example.petstore.generated.petstore.ListUsersRequest
+import com.example.petstore.generated.petstore.StoreUsersResponse
 
 class ZioPetstoreImpl(userState: ZioPetstoreImpl.State) extends PetStoreService {
 
   override def petById(request: PetByIdRequest) =
     request.id match {
-      case 0 => IO.succeed(PetResponse(Some(Pet(0, "Ralph the Dog"))))
-      case 1 => IO.succeed(PetResponse(Some(Pet(1, "Billy the Goat"))))
-      case 2 => IO.succeed(PetResponse(Some(Pet(2, "Puss in Boots"))))
+      case 0 => IO.succeed(PetByIdResponse(Some(Pet(0, "Ralph the Dog"))))
+      case 1 => IO.succeed(PetByIdResponse(Some(Pet(1, "Billy the Goat"))))
+      case 2 => IO.succeed(PetByIdResponse(Some(Pet(2, "Puss in Boots"))))
       case _ => IO.fail(Status.NOT_FOUND)
     }
 
-  override def userByName(request: UserByNameRequest): IO[Status, UserResponse] =
+  override def userByName(request: UserByNameRequest): IO[Status, UserByNameResponse] =
     userState.get.flatMap { state =>
       state.get(request.username) match {
         case None             => IO.fail(Status.NOT_FOUND)
-        case user: Some[User] => IO.succeed(UserResponse(user = user))
+        case user: Some[User] => IO.succeed(UserByNameResponse(user = user))
       }
     }
 
-  override def listUsers(request: EmptyReq): Stream[Status, User] =
+  override def listUsers(request: ListUsersRequest): Stream[Status, User] =
     ZStream.fromIterableM(
       userState.get.map(_.values)
     )
 
-  override def storeUsers(request: Stream[Status, User]): IO[Status, EmptyRes] =
+  override def storeUsers(request: Stream[Status, User]): IO[Status, StoreUsersResponse] =
     request
       .mapM { case user =>
         userState.updateSome {
@@ -40,7 +47,7 @@ class ZioPetstoreImpl(userState: ZioPetstoreImpl.State) extends PetStoreService 
         }
       }
       .runDrain
-      .map(_ => EmptyRes.of("Finished Processing Request"))
+      .map(_ => StoreUsersResponse.of("Finished Processing Request"))
 
   override def bulkUsers(request: Stream[Status, User]): Stream[Status, User] =
     request.mapM {
