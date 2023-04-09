@@ -4,5 +4,11 @@ plugins:
     out: src/main/scala
     opt: 
      - grpc
+  #  Uncomment this part once you have scalapb-validate installed locally
+  # - plugin: scalapb-validate-0.3.4
+  #   out: src/main/scala
+  #   opt:
+  #    - grpc
   - plugin: buf.build/community/scalapb-zio-grpc:v0.5.3
     out: src/main/scala
+

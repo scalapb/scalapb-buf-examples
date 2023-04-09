@@ -68,7 +68,7 @@ Your peers will thank you for it!
 ### Detect Breaking Changes
 Let's shake things up by introducing a breaking change to our protocol buffer definition. To do this, we'll delete the id field from the User message. Once you've made the change, run the following command:
 ```
-buf breaking '.git#branch=master'
+buf breaking --against '.git#branch=master'
 ```
 This will check for any breaking changes in the codebase and report them. In our case, you should see an error that reads:
 ```
@@ -97,6 +97,8 @@ buf mod update
 ```
 And that's it! Buf will resolve the types of the dependencies and understand their use in your local environment. Additionally, the protobuf types used will also be generated. And if your protobuf files aren't intended for public consumption, Buf also supports private packages.
 
+Make note of the new example
+
 ### Code Generation
 Oh no! Looks like this project is missing all the Scala types that are needed to compile and run the server. But with Buf we can easily fix this. So let's generate the code we need by running this command:
 ```
@@ -123,3 +125,29 @@ When using a custom protoc plugin that is not available remotely, it is not as s
 3. In your buf.gen.yaml file, include your plugin in the list of plugins using the plugin: <PLUGIN_NAME> syntax.
 
 Keep in mind that this approach requires more manual setup and maintenance compared to using a remote plugin. Additionally you may wish to include the version as a suffix to the <PLUGIN_NAME> to ensure consistent behavior across computers, or allow different projects to work with different versions of the same plugin.
+
+This example repository uses the validate plugin. To be able to see it run locally
+
+Some commands may require sudo
+
+[Download scalapb-validate-0.3.4](https://repo1.maven.org/maven2/com/thesamet/scalapb/protoc-gen-scalapb-validate/0.3.4/protoc-gen-scalapb-validate-0.3.4-unix.sh)
+
+mv protoc-gen-scalapb-validate-0.3.4-unix.sh /usr/local/bin/protoc-gen-scalapb-validate-0.3.4
+
+Really important that it starts with protoc-gen-* buf assumes the plugins are named this.
+
+chown +x /usr/local/bin/protoc-gen-scalapb-validate-0.3.4
+
+
+Now uncomment sections in petstore.proto and buf.gen.yaml
+
+note that need for "com.thesamet.scalapb" %% "scalapb-validate-core" % "0.3.4"
+
+run `buf generate --include-imports`
+
+Now run the server, and ask for a user with only one character
+
+
+## Conclusion
+
+And thats it! This guide only gives a high level overview of what can be achieved and configured with Buf. Buf's resources and documentation are comprehensive, so please review that for more details. If there is something this guide missed, or can be made more clear, please feel free to drop a PR.
