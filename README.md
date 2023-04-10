@@ -97,7 +97,17 @@ buf mod update
 ```
 And that's it! Buf will resolve the types of the dependencies and understand their use in your local environment. Additionally, the protobuf types used will also be generated. And if your protobuf files aren't intended for public consumption, Buf also supports private packages.
 
-Make note of the new example
+An example can be found in the `buf.yaml` file found in the petstore directory.
+
+In this example we are using the validate protos used by scalapb-validate:
+```
+deps:
+  - buf.build/envoyproxy/protoc-gen-validate:728c81676f9e54d3571603b90b34c0e6419770c6
+```
+The other two dependencies are necessary for a demo of local plugins, they can be ignored for now. If you decide that a dependency is no longer needed you can remove it and run:
+```
+buf mod prune
+```
 
 ### Code Generation
 Oh no! Looks like this project is missing all the Scala types that are needed to compile and run the server. But with Buf we can easily fix this. So let's generate the code we need by running this command:
