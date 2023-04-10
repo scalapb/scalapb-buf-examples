@@ -1,2 +1,32 @@
+.vscode/
+.bloop/
+.metals/
+project/.bloop/
+metals.sbt
+
 *.class
 *.log
+*.swp
+
+# sbt specific
+.bsp
+.cache/
+.history/
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
+.idea
+
+
+#Probably not the best idea normally but to keep this repo clean and let people run stuff themselves
+/src/main/scala/com/example/petstore/generated
+/src/main/scala/io
+/src/main/scala/scalapb
