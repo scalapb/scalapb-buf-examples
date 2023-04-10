@@ -105,9 +105,12 @@ deps:
   - buf.build/envoyproxy/protoc-gen-validate:728c81676f9e54d3571603b90b34c0e6419770c6
 ```
 The other two dependencies are necessary for a demo of local plugins, they can be ignored for now. If you decide that a dependency is no longer needed you can remove it and run:
+
 ```
 buf mod prune
 ```
+
+By adding this dependency we get access to `import "validate/validate.proto";` and the proto extensions available to it. However this is not limited to only extensions, this is also a great way to share common dependencies.
 
 ### Code Generation
 Oh no! Looks like this project is missing all the Scala types that are needed to compile and run the server. But with Buf we can easily fix this. So let's generate the code we need by running this command:
@@ -136,28 +139,37 @@ When using a custom protoc plugin that is not available remotely, it is not as s
 
 Keep in mind that this approach requires more manual setup and maintenance compared to using a remote plugin. Additionally you may wish to include the version as a suffix to the <PLUGIN_NAME> to ensure consistent behavior across computers, or allow different projects to work with different versions of the same plugin.
 
-This example repository uses the validate plugin. To be able to see it run locally
 
-Some commands may require sudo
+#### Running the Validate Plugin locally
+
+This example repository uses the validate plugin, and can be used for code generation. To execute the plugin locally follow these steps, note that some commands may require `sudo` or the equivalent in Windows:
 
 [Download scalapb-validate-0.3.4](https://repo1.maven.org/maven2/com/thesamet/scalapb/protoc-gen-scalapb-validate/0.3.4/protoc-gen-scalapb-validate-0.3.4-unix.sh)
 
+Once downloaded move the file onto your path. For example:
+```
 mv protoc-gen-scalapb-validate-0.3.4-unix.sh /usr/local/bin/protoc-gen-scalapb-validate-0.3.4
+```
 
-Really important that it starts with protoc-gen-* buf assumes the plugins are named this.
+**It is really important that it starts with protoc-gen-* as buf assumes the plugins are named with this prefix.**
 
+Make sure that the script is executable
+```
 chown +x /usr/local/bin/protoc-gen-scalapb-validate-0.3.4
+```
+And that's it! Buf can now execute your local plugin!
 
 
-Now uncomment sections in petstore.proto and buf.gen.yaml
+To see this in action, uncomment out the sections as labeled in the `petstore.proto` file and the `buf.gen.yaml` file and the `build.sbt` file.
 
-note that need for "com.thesamet.scalapb" %% "scalapb-validate-core" % "0.3.4"
+Here is why:
+* `petstore.proto` - the commented section shows how to configure some of the validation features, it also changes the code to do something meanigfully different (validate_at_construction) when you run the server
+* `buf.gen.yaml` - this is the part that actually instructs buf to use the local installed plugin
+* `build.sbt` - the validation plugin refers to some types that are not generated, not all plugins will need this, but like in the grpc example we need the runtime to work.
 
-run `buf generate --include-imports`
-
-Now run the server, and ask for a user with only one character
+Run `buf generate --include-imports` to generate the new code. Now, if you run the example server, you will now see that the fields marked for validation are now validated prior to the execution of the endpoint.
 
 
 ## Conclusion
 
-And thats it! This guide only gives a high level overview of what can be achieved and configured with Buf. Buf's resources and documentation are comprehensive, so please review that for more details. If there is something this guide missed, or can be made more clear, please feel free to drop a PR.
+That's all to this guide however this guide only gives only a high level overview of what can be achieved and configured with Buf. Buf's resources and documentation are comprehensive, so please review that for more details. If there is something this guide missed, or can be made more clear, please feel free to drop a PR.
