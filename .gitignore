@@ -28,3 +28,5 @@ project/plugins/project/
 
 #Probably not the best idea normally but to keep this repo clean and let people run stuff themselves
 /src/main/scala/com/example/petstore/generated
+/src/main/scala/io
+/src/main/scala/scalapb
